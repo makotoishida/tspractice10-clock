@@ -12,18 +12,14 @@ const clocks = [
 ]
 
 function tick() {
-  const html = clocks
-    .map((c) => {
-      const t = new Date()
-      t.setHours(t.getUTCHours() + c.tz)
-      return renderClock(t, 180, c.title, c.tz)
-    })
-    .join('')
-
+  const d = new Date()
+  const html = clocks.map((c) => renderClock(d, 180, c.title, c.tz)).join('')
   app.innerHTML = html
 }
 
-function renderClock(t: Date, size: number, title: string, tz: number) {
+function renderClock(d: Date, size: number, title: string, tz: number) {
+  const t = new Date(d)
+  t.setHours(d.getUTCHours() + tz)
   const h = t.getHours()
   const m = t.getMinutes()
   const s = t.getSeconds()
@@ -38,7 +34,7 @@ function renderClock(t: Date, size: number, title: string, tz: number) {
         <circle cx="200" cy="200" r="190" fill="#fefefe" stroke="#888" />
         ${drawScale()}
         ${drawTitle(title)}
-        ${drawDigital(t)}
+        ${drawDigital(d)}
         ${drawHand(16, 128, degH, '#1010e0d0')}
         ${drawHand(10, 158, degM, '#4040e0d0')}
         ${drawHand(3, 170, degS, '#f060e0d0')}
