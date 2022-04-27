@@ -3,13 +3,27 @@ import './style.css'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 
+const clocks = [
+  { title: 'Honolulu', tz: -10 },
+  { title: 'Tokyo', tz: 9 },
+  { title: 'Los Angels', tz: -7 },
+  { title: 'New York', tz: -4 },
+  { title: 'UTC', tz: 0 },
+]
 
 function tick() {
-  const d = new Date()
-  render(d)
+  const html = clocks
+    .map((c) => {
+      const t = new Date()
+      t.setHours(t.getUTCHours() + c.tz)
+      return renderClock(t, 180, c.title, c.tz)
+    })
+    .join('')
+
+  app.innerHTML = html
 }
 
-function render(t: Date) {
+function renderClock(t: Date, size: number, title: string, tz: number) {
   const h = t.getHours()
   const m = t.getMinutes()
   const s = t.getSeconds()
@@ -18,13 +32,13 @@ function render(t: Date) {
   const degM = (360 * m) / 60 + degS / 60
   const degH = (360 * (h % 12)) / 12 + degM / 12
 
-  app.innerHTML = `
-    <div class="clock">
-      <svg version="1.1" baseProfile="full" width="400" height="400" xmlns="http://www.w3.org/2000/svg">
-        <rect width="100%" height="100%" fill="#ffc" />
+  return `
+    <div class="clock" style="width: ${size}px; height: ${size}px; margin: 0 auto;">
+      <svg version="1.1" width="100%" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
         <circle cx="200" cy="200" r="190" fill="#fefefe" stroke="#888" />
         ${drawScale()}
-        ${timeDigital(t)}
+        ${drawTitle(title)}
+        ${drawDigital(t)}
         ${drawHand(16, 128, degH, '#1010e0d0')}
         ${drawHand(10, 158, degM, '#4040e0d0')}
         ${drawHand(3, 170, degS, '#f060e0d0')}
@@ -58,8 +72,14 @@ function drawHand(w: number, h: number, deg: number, color: string) {
   }" style="transform: translate(50%, 50%) rotate(${deg}deg) " fill="${color}" />`
 }
 
-function timeDigital(d: Date) {
-  return `<text x="200" y="280" font-size="40" text-anchor="middle" fill="#404040e0">
+function drawTitle(title: string) {
+  return `<text x="200" y="160" font-size="36" text-anchor="middle" fill="#404040e0">
+    ${title}
+  </text>`
+}
+
+function drawDigital(d: Date) {
+  return `<text x="200" y="270" font-size="32" text-anchor="middle" fill="#404040e0">
     ${timeStr(d)}
   </text>`
 }
