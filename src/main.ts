@@ -17,8 +17,7 @@ function tick() {
   const clockTemplates = clockConfigs.map((c) =>
     renderClock(d, 180, c.title, c.tz)
   )
-  const template = html`${clockTemplates}`
-  render(template, appRoot)
+  render(clockTemplates, appRoot)
 }
 
 function renderClock(d: Date, size: number, title: string, tz: number) {
